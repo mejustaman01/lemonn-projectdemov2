@@ -72,6 +72,4 @@ export default function PatientTable({ patients }: PatientTableProps) {
       </table>
     </div>
   );
-};
-
-export default PatientTable;
+}
