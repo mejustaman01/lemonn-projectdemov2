@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Play, Clock, Target, Award, BarChart2 } from 'lucide-react';
+import { ArrowLeft, Play, Clock } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { useParams } from 'react-router-dom';
 
@@ -77,8 +77,7 @@ const PatientActivities: React.FC = () => {
               {showCorrect && (
                 <div className="absolute inset-0 bg-green-500 bg-opacity-30 rounded-lg flex items-center justify-center">
                   <div className="bg-white p-6 rounded-lg shadow-xl text-center">
-                    <Award className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-green-600">Excellent!</h3>
+                    <div className="text-2xl font-bold text-green-600">Excellent!</div>
                     <p className="text-gray-600 mt-2">That's the correct answer!</p>
                   </div>
                 </div>
@@ -190,38 +189,6 @@ const PatientActivities: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center">
-                  <Target className="h-8 w-8 text-green-500" />
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">Goals</h3>
-                    <p className="text-sm text-gray-500">Track your progress</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center">
-                  <BarChart2 className="h-8 w-8 text-blue-500" />
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">Statistics</h3>
-                    <p className="text-sm text-gray-500">View your performance</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center">
-                  <Award className="h-8 w-8 text-yellow-500" />
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">Achievements</h3>
-                    <p className="text-sm text-gray-500">Your earned badges</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         ) : (
