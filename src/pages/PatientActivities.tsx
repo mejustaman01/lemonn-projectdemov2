@@ -6,7 +6,8 @@ import { useParams } from 'react-router-dom';
 const PatientActivities: React.FC = () => {
   const { id } = useParams();
   const [currentActivity, setCurrentActivity] = useState<number | null>(null);
-  const [showCorrect, setShowCorrect] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showFeedback, setShowFeedback] = useState<'correct' | 'incorrect' | null>(null);
 
   const activities = [
     {
@@ -17,6 +18,38 @@ const PatientActivities: React.FC = () => {
       difficulty: 'Easy',
       progress: 60,
       category: 'Vocabulary',
+      steps: [
+        {
+          image: 'https://images.pexels.com/photos/2071873/pexels-photo-2071873.jpeg',
+          question: 'What Animal is This?',
+          options: ['Cat', 'Dog', 'Mouse'],
+          correct: 'Cat'
+        },
+        {
+          image: 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg',
+          question: 'Which Animal Do You See?',
+          options: ['Lion', 'Elephant', 'Giraffe'],
+          correct: 'Elephant'
+        },
+        {
+          image: 'https://images.pexels.com/photos/145939/pexels-photo-145939.jpeg',
+          question: 'Name This Animal',
+          options: ['Tiger', 'Lion', 'Leopard'],
+          correct: 'Tiger'
+        },
+        {
+          image: 'https://images.pexels.com/photos/1618606/pexels-photo-1618606.jpeg',
+          question: 'What Animal is in the Picture?',
+          options: ['Penguin', 'Duck', 'Parrot'],
+          correct: 'Penguin'
+        },
+        {
+          image: 'https://images.pexels.com/photos/133459/pexels-photo-133459.jpeg',
+          question: 'Which Animal is This?',
+          options: ['Snake', 'Lizard', 'Turtle'],
+          correct: 'Turtle'
+        }
+      ]
     },
     {
       id: 2,
@@ -26,6 +59,38 @@ const PatientActivities: React.FC = () => {
       difficulty: 'Medium',
       progress: 30,
       category: 'Social Skills',
+      steps: [
+        {
+          image: 'https://images.pexels.com/photos/3807755/pexels-photo-3807755.jpeg',
+          question: 'How is This Person Feeling?',
+          options: ['Happy', 'Sad', 'Angry'],
+          correct: 'Happy'
+        },
+        {
+          image: 'https://images.pexels.com/photos/3808743/pexels-photo-3808743.jpeg',
+          question: 'What Emotion is Shown?',
+          options: ['Surprised', 'Excited', 'Scared'],
+          correct: 'Surprised'
+        },
+        {
+          image: 'https://images.pexels.com/photos/3808849/pexels-photo-3808849.jpeg',
+          question: 'Identify the Emotion',
+          options: ['Sad', 'Tired', 'Bored'],
+          correct: 'Sad'
+        },
+        {
+          image: 'https://images.pexels.com/photos/3812743/pexels-photo-3812743.jpeg',
+          question: 'What Feeling is This?',
+          options: ['Angry', 'Frustrated', 'Upset'],
+          correct: 'Angry'
+        },
+        {
+          image: 'https://images.pexels.com/photos/3812787/pexels-photo-3812787.jpeg',
+          question: 'How Does This Person Feel?',
+          options: ['Excited', 'Happy', 'Surprised'],
+          correct: 'Excited'
+        }
+      ]
     },
     {
       id: 3,
@@ -35,18 +100,58 @@ const PatientActivities: React.FC = () => {
       difficulty: 'Hard',
       progress: 0,
       category: 'Comprehension',
-    },
+      steps: [
+        {
+          instruction: 'Touch your nose and then clap your hands',
+          options: ['Touched nose then clapped', 'Clapped then touched nose', 'Only touched nose'],
+          correct: 'Touched nose then clapped'
+        },
+        {
+          instruction: 'Stand up, turn around, and sit down',
+          options: ['Stood, turned, sat', 'Stood and sat', 'Only stood up'],
+          correct: 'Stood, turned, sat'
+        },
+        {
+          instruction: 'Put your hands on your head and count to three',
+          options: ['Hands on head and counted', 'Only put hands on head', 'Only counted'],
+          correct: 'Hands on head and counted'
+        },
+        {
+          instruction: 'Close your eyes and touch your ears',
+          options: ['Closed eyes and touched ears', 'Only closed eyes', 'Only touched ears'],
+          correct: 'Closed eyes and touched ears'
+        },
+        {
+          instruction: 'Jump twice and wave your hand',
+          options: ['Jumped twice and waved', 'Only jumped', 'Only waved'],
+          correct: 'Jumped twice and waved'
+        }
+      ]
+    }
   ];
 
   const handleActivityClick = (activityNumber: number) => {
     setCurrentActivity(activityNumber);
-    setShowCorrect(false);
+    setCurrentStep(0);
+    setShowFeedback(null);
   };
 
   const handleAnswerClick = (answer: string) => {
-    if (answer === 'Cat') {
-      setShowCorrect(true);
-    }
+    const activity = activities.find(a => a.id === currentActivity);
+    if (!activity) return;
+
+    const isCorrect = activity.steps[currentStep].correct === answer;
+    setShowFeedback(isCorrect ? 'correct' : 'incorrect');
+
+    setTimeout(() => {
+      setShowFeedback(null);
+      if (currentStep < activity.steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        setCurrentActivity(null);
+        setCurrentStep(0);
+      }
+    }, 2000);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -59,50 +164,67 @@ const PatientActivities: React.FC = () => {
   };
 
   const renderActivityContent = () => {
-    if (currentActivity === 1) {
-      return (
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
-          <div className="flex flex-col items-center space-y-8">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold text-gray-900">What Animal is This?</h2>
-              <p className="mt-2 text-gray-600">Look at the picture and select the correct animal</p>
-            </div>
-            
+    const activity = activities.find(a => a.id === currentActivity);
+    if (!activity) return null;
+
+    const currentStepData = activity.steps[currentStep];
+
+    return (
+      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <div className="flex flex-col items-center space-y-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900">{currentStepData.question || currentStepData.instruction}</h2>
+            <p className="mt-2 text-gray-600">
+              {activity.id === 3 ? 'Follow the instruction and select what you did' : 'Select the correct answer'}
+            </p>
+          </div>
+          
+          {currentStepData.image && (
             <div className="relative">
               <img 
-                src="https://images.pexels.com/photos/2071873/pexels-photo-2071873.jpeg" 
-                alt="Cat" 
+                src={currentStepData.image}
+                alt="Activity"
                 className="w-96 h-96 object-cover rounded-lg shadow-md"
               />
-              {showCorrect && (
-                <div className="absolute inset-0 bg-green-500 bg-opacity-30 rounded-lg flex items-center justify-center">
+              {showFeedback && (
+                <div className={`absolute inset-0 ${showFeedback === 'correct' ? 'bg-green-500' : 'bg-red-500'} bg-opacity-30 rounded-lg flex items-center justify-center`}>
                   <div className="bg-white p-6 rounded-lg shadow-xl text-center">
-                    <div className="text-2xl font-bold text-green-600">Excellent!</div>
-                    <p className="text-gray-600 mt-2">That's the correct answer!</p>
+                    <div className={`text-2xl font-bold ${showFeedback === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
+                      {showFeedback === 'correct' ? 'Excellent!' : 'Try Again!'}
+                    </div>
+                    <p className="text-gray-600 mt-2">
+                      {showFeedback === 'correct' ? "That's the correct answer!" : 'Keep practicing!'}
+                    </p>
                   </div>
                 </div>
               )}
             </div>
-            
-            {!showCorrect && (
-              <div className="grid grid-cols-3 gap-4 w-full max-w-md">
-                {['Cat', 'Dog', 'Mouse'].map((animal) => (
-                  <Button
-                    key={animal}
-                    onClick={() => handleAnswerClick(animal)}
-                    variant="outline"
-                    className="py-6 text-lg hover:bg-green-50 transition-colors"
-                  >
-                    {animal}
-                  </Button>
-                ))}
-              </div>
-            )}
+          )}
+          
+          {!showFeedback && (
+            <div className="grid grid-cols-1 gap-4 w-full max-w-md">
+              {currentStepData.options.map((option) => (
+                <Button
+                  key={option}
+                  onClick={() => handleAnswerClick(option)}
+                  variant="outline"
+                  className="py-6 text-lg hover:bg-green-50 transition-colors"
+                >
+                  {option}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-green-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${((currentStep + 1) / activity.steps.length) * 100}%` }}
+            />
           </div>
         </div>
-      );
-    }
-    return null;
+      </div>
+    );
   };
 
   return (
@@ -115,7 +237,8 @@ const PatientActivities: React.FC = () => {
             onClick={() => {
               if (currentActivity !== null) {
                 setCurrentActivity(null);
-                setShowCorrect(false);
+                setCurrentStep(0);
+                setShowFeedback(null);
               } else {
                 window.history.back();
               }
